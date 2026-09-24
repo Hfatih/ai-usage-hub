@@ -34,7 +34,7 @@
     "targets": ["nsis"],
     "publisher": "AI Usage Hub",
     "shortDescription": "Local-first AI usage and application dashboard",
-    "longDescription": "Track AI application runtime, provider status and verified usage information from a private Windows dashboard.",
+    "longDescription": "Track AI application runtime, provider status and verified usage information from a private desktop dashboard.",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"],
     "windows": {
       "nsis": {

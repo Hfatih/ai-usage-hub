@@ -104,8 +104,6 @@ export interface SecurityStatus {
   databaseSizeBytes: number;
   accountCount: number;
   usageSnapshotCount: number;
-  storedSecretCount: number;
-  providerCredentialsStored: boolean;
 }
 
 export interface AppSettings {

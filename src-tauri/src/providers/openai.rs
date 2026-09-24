@@ -310,6 +310,15 @@ fn codex_candidates() -> Vec<PathBuf> {
         }
     }
 
+    #[cfg(target_os = "macos")]
+    {
+        candidates.push(PathBuf::from("/opt/homebrew/bin/codex"));
+        candidates.push(PathBuf::from("/usr/local/bin/codex"));
+        if let Some(home) = env::var_os("HOME") {
+            candidates.push(PathBuf::from(home).join(".local/bin/codex"));
+        }
+    }
+
     candidates.push(PathBuf::from("codex"));
     candidates.dedup();
     candidates

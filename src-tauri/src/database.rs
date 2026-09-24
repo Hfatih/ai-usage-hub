@@ -536,8 +536,6 @@ impl Database {
             database_size_bytes,
             account_count,
             usage_snapshot_count,
-            stored_secret_count: 0,
-            provider_credentials_stored: false,
         })
     }
 
@@ -751,46 +749,46 @@ fn duration_since(tx: &Transaction<'_>, app_id: &str, since: i64, now: i64) -> R
 
 fn seed_applications() -> Vec<ApplicationDefinition> {
     [
-        ("codex", Some("openai"), "Codex", &["codex.exe"][..]),
-        ("chatgpt", Some("openai"), "ChatGPT", &["chatgpt.exe"][..]),
+        ("codex", Some("openai"), "Codex", &["codex.exe", "Codex"][..]),
+        ("chatgpt", Some("openai"), "ChatGPT", &["chatgpt.exe", "ChatGPT"][..]),
         (
             "claude",
             Some("anthropic"),
             "Claude Desktop",
-            &["claude.exe"][..],
+            &["claude.exe", "Claude"][..],
         ),
         (
             "claude-code",
             Some("anthropic"),
             "Claude Code",
-            &["claude-code.exe"][..],
+            &["claude-code.exe", "claude"][..],
         ),
         (
             "gemini",
             Some("google"),
             "Gemini CLI",
-            &["gemini.exe", "gemini.cmd"][..],
+            &["gemini.exe", "gemini.cmd", "gemini"][..],
         ),
         (
             "antigravity",
             Some("google"),
             "Antigravity",
-            &["antigravity.exe", "antigravity ide.exe"][..],
+            &["antigravity.exe", "antigravity ide.exe", "Antigravity"][..],
         ),
         (
             "opencode",
             Some("opencode"),
             "OpenCode",
-            &["opencode.exe"][..],
+            &["opencode.exe", "opencode", "OpenCode"][..],
         ),
-        ("cursor", None, "Cursor", &["cursor.exe"][..]),
+        ("cursor", None, "Cursor", &["cursor.exe", "Cursor"][..]),
         (
             "vscode",
             Some("github"),
             "Visual Studio Code",
-            &["code.exe"][..],
+            &["code.exe", "Code"][..],
         ),
-        ("kimi", Some("kimi"), "Kimi", &["kimi.exe"][..]),
+        ("kimi", Some("kimi"), "Kimi", &["kimi.exe", "Kimi"][..]),
     ]
     .into_iter()
     .map(

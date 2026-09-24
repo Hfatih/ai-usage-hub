@@ -1,7 +1,7 @@
 <div align="center">
   <img src="app-icon.svg" alt="AI Usage Hub yıldız logosu" width="76" height="76">
   <h1>AI Usage Hub</h1>
-  <p>Yapay zekâ araçların, kullanımları ve uygulama etkinliği tek bir özel Windows panelinde.</p>
+  <p>Yapay zekâ araçların, kullanımları ve uygulama etkinliği tek bir özel masaüstü panelinde.</p>
   <p>
     <a href="README.md">English</a> ·
     <a href="../../releases/latest">İndir</a> ·
@@ -14,7 +14,7 @@ AI Usage Hub desteklenen sağlayıcı kotalarını, yerel token ve maliyet topla
 
 > **Ölçüm farkı:** Uygulamanın açık kalma süresi, işlemin çalıştığı süreyi gösterir. Bu süre sağlayıcı kotası veya token tüketimi değildir. *Resmî*, *Yerel* ve *Hesaplanan* değerlerin kaynağı ayrı belirtilir; uygulama kalan kota uydurmaz.
 
-## İndir ve kur
+## İndir ve kur (Windows)
 
 1. [Son sürüm](../../releases/latest) sayfasından Windows kurulum EXE dosyasını indir.
 2. Kurulumu çalıştır. Yalnızca mevcut Windows kullanıcısına kurulur; yönetici hesabı gerekmez.
@@ -42,9 +42,9 @@ Sağlayıcı bağlantısı, hesap kimliği, uygulama algılama ve kullanım birb
 - OpenCode bağdaştırıcısı sağlayıcı kimliklerini okur, kimlik bilgisi değerlerini yok sayar. Herkese açık model kataloğu isteğinde oturum bilgisi kullanılmaz.
 - Kendi hesaplarını ayırt edebilmen için hesap adları uygulamada görünür. Herkese açık hata bildirimine sansürlenmemiş ekran görüntüsü veya veritabanı yükleme.
 
-Veritabanı: `%APPDATA%\com.aiusagehub.desktop\ai-usage-hub.sqlite3`. Taşımadan ya da silmeden önce uygulamayı tamamen kapat. Güvenlik ilkeleri: [SECURITY.md](SECURITY.md).
+Veritabanı Windows'ta `%APPDATA%\com.aiusagehub.desktop\ai-usage-hub.sqlite3`, macOS'ta `~/Library/Application Support/com.aiusagehub.desktop/ai-usage-hub.sqlite3` konumundadır. Taşımadan ya da silmeden önce uygulamayı tamamen kapat. Güvenlik ilkeleri: [SECURITY.md](SECURITY.md).
 
-## Kaynaktan çalıştır
+## Kaynaktan çalıştır (Windows)
 
 **Gereksinimler:** Windows 10/11, Node.js 20+, kararlı Rust MSVC araç zinciri, **Desktop development with C++** bileşeniyle Microsoft C++ Build Tools ve WebView2.
 
@@ -63,9 +63,18 @@ npm run tauri build
 
 Kurulum dosyası `src-tauri/target/release/bundle/nsis/` altında oluşur. Kaynaktan derlemek için herhangi bir sağlayıcı hesabı gerekmez. Yalnızca tarayıcıda açılan Vite önizlemesi kurgusal örnek veriler kullanır; canlı yerel entegrasyonları Tauri uygulamasında kontrol et.
 
-## Platform dalları
+### macOS
 
-Varsayılan [`main` dalı](https://github.com/Hfatih/ai-usage-hub/tree/main) yayımlanan Windows sürümüdür. [`macos` dalı](https://github.com/Hfatih/ai-usage-hub/tree/macos) ilerideki Mac uyarlaması için ayrı geliştirme alanıdır. Henüz macOS kurulum paketi yoktur; Windows'a özel entegrasyonların Mac üzerinde uyarlanıp doğrulanması gerekir.
+macOS uyarlaması kaynak koddan kullanılabilir; imzalı bir macOS sürümü henüz yayımlanmıyor. Node.js 20+, Rust ve Xcode Command Line Tools kurup şu komutları çalıştır:
+
+```sh
+npm ci
+npm run tauri dev
+```
+
+İmzasız `.app` ve `.dmg` üretmek için `./script/package_macos.sh` komutunu kullan. Çıktı `src-tauri/target/release/bundle/` altındadır. `./script/build_and_run.sh` derleme ve başlatmayı tek adımda yapar. Otomatik algılama bir uygulamayı bulamazsa **Uygulamalar** sayfasından `.app` paketini seçebilirsin; yaygın CLI kurulumları `/opt/homebrew/bin`, `/usr/local/bin` ve `~/.local/bin` altında aranır.
+
+İmzasız macOS paketleri yerel geliştirme içindir. Sağlayıcı verileri yine kurulu uygulamaların yerel arayüzlerine ve dosyalarına bağlıdır; bulunamayan kaynaklar kullanılamıyor olarak gösterilir.
 
 ## Değişiklikleri doğrula
 

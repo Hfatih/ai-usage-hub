@@ -213,8 +213,13 @@ impl CachedClaudeUsage {
 }
 
 fn desktop_usage(expected_organization: Option<&str>) -> Option<CachedClaudeUsage> {
-    let app_data = env::var_os("APPDATA")?;
-    let bytes = fs::read(PathBuf::from(app_data).join("Claude/plan-usage-history.json")).ok()?;
+    #[cfg(target_os = "macos")]
+    let path = PathBuf::from(env::var_os("HOME")?)
+        .join("Library/Application Support/Claude/plan-usage-history.json");
+    #[cfg(not(target_os = "macos"))]
+    let path = PathBuf::from(env::var_os("APPDATA")?)
+        .join("Claude/plan-usage-history.json");
+    let bytes = fs::read(path).ok()?;
     desktop_usage_from_bytes(&bytes, expected_organization)
 }
 
@@ -474,6 +479,14 @@ fn claude_candidates() -> Vec<PathBuf> {
     }
     if let Some(user_profile) = env::var_os("USERPROFILE") {
         candidates.push(PathBuf::from(user_profile).join(".local/bin/claude.exe"));
+    }
+    #[cfg(target_os = "macos")]
+    {
+        candidates.push(PathBuf::from("/opt/homebrew/bin/claude"));
+        candidates.push(PathBuf::from("/usr/local/bin/claude"));
+        if let Some(home) = env::var_os("HOME") {
+            candidates.push(PathBuf::from(home).join(".local/bin/claude"));
+        }
     }
     candidates.push(PathBuf::from("claude"));
     candidates.dedup();

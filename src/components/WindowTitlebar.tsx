@@ -3,11 +3,14 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, Square, X } from "lucide-react";
 import { useTranslation } from "../i18n";
 import { BrandMark } from "./BrandMark";
+import { isMac } from "../lib/platform";
 
 export function WindowTitlebar({ appName }: { appName: string }) {
   const { t } = useTranslation();
   const native = isTauri();
   const toggleMaximize = () => { if (native) void getCurrentWindow().toggleMaximize(); };
+
+  if (native && isMac) return null;
 
   return <header className="window-titlebar">
     <div className="window-titlebar__identity" data-tauri-drag-region>

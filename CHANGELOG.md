@@ -3,6 +3,11 @@
 All public releases are listed here. Version numbers follow the app's package,
 Rust crate, and Tauri bundle versions together.
 
+## [0.1.17] - 2026-09-24
+
+- Anchor account card actions to the bottom of each grid-stretched card, leaving
+  any extra space between usage details and the footer.
+
 ## [0.1.16] - 2026-09-24
 
 - Make English the default language for new installations and the Windows

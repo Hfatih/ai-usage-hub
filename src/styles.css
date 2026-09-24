@@ -212,7 +212,7 @@ nav { display: grid; gap: 4px; }
 .switch input:checked + span::before { transform: translateX(15px); background: var(--success); }
 
 .account-grid, .integration-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
-.account-card { overflow: hidden; }
+.account-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 .account-card > header, .integration-card > header { display: flex; align-items: center; gap: 11px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
 .account-card > header > div, .integration-card > header > div { display: grid; min-width: 0; gap: 2px; }
 .account-card > header > div { flex: 1; }
@@ -226,7 +226,7 @@ nav { display: grid; gap: 4px; }
 .account-usage > div:first-child strong { font-size: 17px; }
 .account-usage > small { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; color: #7d7d86; font-size: 9px; line-height: 1.45; }
 .account-empty-usage { padding: 22px 0; color: var(--soft); font-size: 9px; text-align: center; }
-.account-card > footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 18px; border-top: 1px solid var(--line); background: rgba(0,0,0,.08); }
+.account-card > footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding: 11px 18px; border-top: 1px solid var(--line); background: rgba(0,0,0,.08); }
 .account-card > footer > span { display: flex; align-items: center; gap: 5px; color: var(--soft); font-size: 8px; }
 .danger-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 9px; border: 1px solid rgba(255,123,134,.22); border-radius: 8px; color: var(--danger); background: rgba(255,123,134,.055); font-size: 9px; cursor: pointer; }
 .page-note { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 17px 0 0; color: var(--soft); font-size: 9px; line-height: 1.5; text-align: center; }

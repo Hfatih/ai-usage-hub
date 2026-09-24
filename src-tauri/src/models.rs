@@ -199,8 +199,6 @@ pub struct SecurityStatus {
     pub database_size_bytes: u64,
     pub account_count: i64,
     pub usage_snapshot_count: i64,
-    pub stored_secret_count: i64,
-    pub provider_credentials_stored: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

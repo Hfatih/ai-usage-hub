@@ -1,7 +1,7 @@
 <div align="center">
   <img src="app-icon.svg" alt="AI Usage Hub star logo" width="76" height="76">
   <h1>AI Usage Hub</h1>
-  <p>Your AI tools, usage, and app activity in one private Windows dashboard.</p>
+  <p>Your AI tools, usage, and app activity in one private desktop dashboard.</p>
   <p>
     <a href="README.tr.md">Türkçe</a> ·
     <a href="../../releases/latest">Download</a> ·
@@ -14,7 +14,7 @@ AI Usage Hub brings supported provider quotas, local token and cost totals, app 
 
 > **What it measures:** An app's open time means its process was running. It is separate from provider usage and token consumption. Values marked *Official*, *Local*, or *Calculated* retain their source; the app does not invent a remaining quota.
 
-## Download and install
+## Download and install (Windows)
 
 1. Download the Windows setup EXE from the [latest release](../../releases/latest).
 2. Run the installer. It installs for the current Windows user and does not need an administrator account.
@@ -42,9 +42,9 @@ Provider connection, account identity, app detection, and usage are separate sig
 - The OpenCode adapter reads provider IDs but ignores credential values. Its public model catalog request is unauthenticated.
 - Account labels are shown in the app to help you distinguish your own accounts. Do not post unredacted screenshots or your database in a public issue.
 
-The database is `%APPDATA%\com.aiusagehub.desktop\ai-usage-hub.sqlite3`. Close the app fully before moving or deleting it. See [SECURITY.md](SECURITY.md) for the security policy.
+The database is `%APPDATA%\com.aiusagehub.desktop\ai-usage-hub.sqlite3` on Windows and `~/Library/Application Support/com.aiusagehub.desktop/ai-usage-hub.sqlite3` on macOS. Close the app fully before moving or deleting it. See [SECURITY.md](SECURITY.md) for the security policy.
 
-## Build from source
+## Build from source (Windows)
 
 **Prerequisites:** Windows 10/11, Node.js 20+, a stable Rust MSVC toolchain, Microsoft C++ Build Tools with **Desktop development with C++**, and WebView2.
 
@@ -63,9 +63,18 @@ npm run tauri build
 
 The installer is written under `src-tauri/target/release/bundle/nsis/`. Building from source requires no provider credentials. The browser-only Vite preview uses fictional sample data; run the Tauri app to check live local integrations.
 
-## Platform branches
+### macOS
 
-The default [`main` branch](https://github.com/Hfatih/ai-usage-hub/tree/main) is the Windows version and contains the released installer. The [`macos` branch](https://github.com/Hfatih/ai-usage-hub/tree/macos) is a separate development track for a future Mac port. No macOS installer is published yet; the Windows-specific integrations still need to be adapted and verified on a Mac.
+The macOS port is available from source; a signed macOS release is not published yet. Install Node.js 20+, Rust and Xcode Command Line Tools, then run:
+
+```sh
+npm ci
+npm run tauri dev
+```
+
+To build an unsigned `.app` and `.dmg`, run `./script/package_macos.sh`. The output is under `src-tauri/target/release/bundle/`. The project also includes `./script/build_and_run.sh` for a build-and-launch loop. On macOS, choose an `.app` bundle in **Apps** when automatic detection misses it; common CLI installs under `/opt/homebrew/bin`, `/usr/local/bin`, and `~/.local/bin` are checked automatically.
+
+Unsigned macOS bundles are intended for local development. Provider data still depends on each installed provider's local interfaces and files; a missing source remains marked unavailable.
 
 ## Verify a change
 

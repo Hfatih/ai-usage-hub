@@ -204,7 +204,8 @@ fn find_antigravity_session() -> Result<Option<LocalSession>> {
             .exe()
             .map(|path| path.to_string_lossy().to_ascii_lowercase())
             .unwrap_or_default();
-        if !name.eq_ignore_ascii_case("language_server.exe") || !executable.contains("antigravity")
+        if !name.to_ascii_lowercase().starts_with("language_server")
+            || !executable.contains("antigravity")
         {
             return None;
         }
@@ -243,14 +244,26 @@ fn valid_csrf_token(value: &str) -> bool {
 }
 
 fn antigravity_log_candidates() -> Vec<PathBuf> {
-    let Some(app_data) = env::var_os("APPDATA") else {
-        return Vec::new();
-    };
-    let root = PathBuf::from(app_data);
-    vec![
-        root.join("Antigravity/logs/language_server.log"),
-        root.join("Antigravity IDE/logs/language_server.log"),
-    ]
+    #[cfg(target_os = "macos")]
+    {
+        let Some(home) = env::var_os("HOME").map(PathBuf::from) else {
+            return Vec::new();
+        };
+        return vec![
+            home.join("Library/Logs/Antigravity/language_server.log"),
+            home.join("Library/Application Support/Antigravity/logs/language_server.log"),
+        ];
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let Some(root) = env::var_os("APPDATA").map(PathBuf::from) else {
+            return Vec::new();
+        };
+        vec![
+            root.join("Antigravity/logs/language_server.log"),
+            root.join("Antigravity IDE/logs/language_server.log"),
+        ]
+    }
 }
 
 fn https_port_from_log(path: &PathBuf) -> Option<u16> {

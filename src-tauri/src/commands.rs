@@ -4,7 +4,7 @@ use tauri::{AppHandle, State};
 use tauri_plugin_autostart::ManagerExt;
 
 use crate::{
-    detector::resolve_executable,
+    detector::{resolve_executable, valid_application_path},
     error::{HubError, Result},
     models::{
         AccountSummary, ActivityEvent, AppSettings, DashboardSnapshot, SecurityStatus,
@@ -155,13 +155,15 @@ pub fn set_app_executable(
     executable_path: String,
 ) -> Result<()> {
     let canonical = std::fs::canonicalize(&executable_path)?;
-    if !canonical.is_file()
-        || !canonical
-            .extension()
-            .is_some_and(|extension| extension.eq_ignore_ascii_case("exe"))
-    {
+    if !valid_application_path(&canonical) {
+        #[cfg(target_os = "windows")]
+        let message = "select a valid Windows .exe file";
+        #[cfg(target_os = "macos")]
+        let message = "select a macOS .app bundle or executable file";
+        #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+        let message = "select a valid executable file";
         return Err(HubError::Configuration(
-            "select a valid Windows .exe file".into(),
+            message.into(),
         ));
     }
     let path = canonical.to_string_lossy();
@@ -190,6 +192,17 @@ pub fn launch(state: &HubState, app_id: &str) -> Result<()> {
 }
 
 fn spawn_hidden(executable: &Path, arguments: &[String]) -> Result<()> {
+    #[cfg(target_os = "macos")]
+    if executable.is_dir() {
+        let mut command = Command::new("/usr/bin/open");
+        command.arg("-a").arg(executable);
+        if !arguments.is_empty() {
+            command.arg("--args").args(arguments);
+        }
+        command.spawn()?;
+        return Ok(());
+    }
+
     let mut command = Command::new(executable);
     command.args(arguments);
     if let Some(parent) = executable.parent() {

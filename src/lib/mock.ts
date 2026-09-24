@@ -111,6 +111,4 @@ export const developmentSecurity: SecurityStatus = {
   databaseSizeBytes: 0,
   accountCount: developmentAccounts.length,
   usageSnapshotCount: developmentUsageHistory.length,
-  storedSecretCount: 0,
-  providerCredentialsStored: false,
 };

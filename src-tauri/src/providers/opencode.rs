@@ -270,7 +270,7 @@ fn opencode_running() -> bool {
         process
             .name()
             .to_string_lossy()
-            .eq_ignore_ascii_case("opencode.exe")
+            .eq_ignore_ascii_case(if cfg!(target_os = "windows") { "opencode.exe" } else { "opencode" })
     })
 }
 

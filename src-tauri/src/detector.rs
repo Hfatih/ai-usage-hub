@@ -37,9 +37,6 @@ impl ProcessDetector {
                         .join(" ");
                     process_matches(app, &name, executable, &command)
                 });
-                let detected_path = matched
-                    .and_then(|process| process.exe())
-                    .map(|path| path.to_string_lossy().into_owned());
                 let detected_name =
                     matched.map(|process| process.name().to_string_lossy().into_owned());
                 let configured = resolve_executable(app);
@@ -62,10 +59,7 @@ impl ProcessDetector {
                     today_seconds: 0,
                     week_seconds: 0,
                     last_used_at: None,
-                    launchable: configured.is_some()
-                        || detected_path
-                            .as_deref()
-                            .is_some_and(|path| Path::new(path).is_file()),
+                    launchable: configured.is_some(),
                 }
             })
             .collect()
@@ -88,12 +82,22 @@ pub fn process_matches(
         || executable.contains("/claude-code/")
         || command.contains("@anthropic-ai\\claude-code")
         || command.contains("@anthropic-ai/claude-code")
-        || command.contains("\\claude-code\\");
+        || command.contains("\\claude-code\\")
+        || (cfg!(target_os = "macos")
+            && process_name == "claude"
+            && !executable.contains(".app/contents/macos/"));
     if app.id == "claude-code" && is_claude_process {
         return is_claude_code;
     }
     if app.id == "claude" && is_claude_process {
         return !is_claude_code;
+    }
+    if cfg!(target_os = "macos")
+        && app.id == "gemini"
+        && normalized == "gemini"
+        && executable.contains(".app/contents/macos/")
+    {
+        return false;
     }
 
     if app
@@ -121,23 +125,43 @@ pub fn resolve_executable(app: &ApplicationDefinition) -> Option<PathBuf> {
         .executable_path
         .as_ref()
         .map(PathBuf::from)
-        .filter(|path| valid_windows_executable(path))
+        .filter(|path| valid_application_path(path))
     {
         return Some(path);
     }
 
     known_candidates(&app.id)
         .into_iter()
-        .find(|path| valid_windows_executable(path))
+        .find(|path| valid_application_path(path))
 }
 
-fn valid_windows_executable(path: &Path) -> bool {
-    path.is_file()
-        && path
-            .extension()
-            .is_some_and(|extension| extension.eq_ignore_ascii_case("exe"))
+pub fn valid_application_path(path: &Path) -> bool {
+    #[cfg(target_os = "windows")]
+    {
+        path.is_file()
+            && path
+                .extension()
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("exe"))
+    }
+    #[cfg(target_os = "macos")]
+    {
+        use std::os::unix::fs::PermissionsExt;
+
+        (path.is_dir()
+            && path.extension().is_some_and(|extension| extension == "app")
+            && path.join("Contents/Info.plist").is_file())
+            || (path.is_file()
+                && path
+                    .metadata()
+                    .is_ok_and(|metadata| metadata.permissions().mode() & 0o111 != 0))
+    }
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    {
+        path.is_file()
+    }
 }
 
+#[cfg(target_os = "windows")]
 fn known_candidates(app_id: &str) -> Vec<PathBuf> {
     let local = std::env::var_os("LOCALAPPDATA").map(PathBuf::from);
     let programs = std::env::var_os("ProgramFiles").map(PathBuf::from);
@@ -170,6 +194,52 @@ fn known_candidates(app_id: &str) -> Vec<PathBuf> {
         paths.extend(global.iter().map(|path| root.join(path)));
     }
     paths
+}
+
+#[cfg(target_os = "macos")]
+fn known_candidates(app_id: &str) -> Vec<PathBuf> {
+    let names: &[&str] = match app_id {
+        "codex" => &["Codex.app"],
+        "chatgpt" => &["ChatGPT.app"],
+        "claude" => &["Claude.app"],
+        "antigravity" => &["Antigravity.app"],
+        "cursor" => &["Cursor.app"],
+        "vscode" => &["Visual Studio Code.app"],
+        "kimi" => &["Kimi.app"],
+        "opencode" => &["OpenCode.app"],
+        _ => &[],
+    };
+    let mut paths = Vec::new();
+    for root in [
+        Some(PathBuf::from("/Applications")),
+        std::env::var_os("HOME").map(|home| PathBuf::from(home).join("Applications")),
+    ]
+    .into_iter()
+    .flatten()
+    {
+        paths.extend(names.iter().map(|name| root.join(name)));
+    }
+    let command = match app_id {
+        "claude-code" => Some("claude"),
+        "gemini" => Some("gemini"),
+        "codex" => Some("codex"),
+        "opencode" => Some("opencode"),
+        _ => None,
+    };
+    if let Some(command) = command {
+        for root in ["/opt/homebrew/bin", "/usr/local/bin"] {
+            paths.push(PathBuf::from(root).join(command));
+        }
+        if let Some(home) = std::env::var_os("HOME") {
+            paths.push(PathBuf::from(home).join(".local/bin").join(command));
+        }
+    }
+    paths
+}
+
+#[cfg(not(any(target_os = "windows", target_os = "macos")))]
+fn known_candidates(_app_id: &str) -> Vec<PathBuf> {
+    Vec::new()
 }
 
 #[cfg(test)]
@@ -234,6 +304,49 @@ mod tests {
         ));
     }
 
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn mac_claude_desktop_and_cli_are_distinguished() {
+        let desktop = definition("claude", &["Claude"]);
+        let code = definition("claude-code", &["claude"]);
+        let app = Path::new("/Applications/Claude.app/Contents/MacOS/Claude");
+        let cli = Path::new("/Users/me/.local/bin/claude");
+        assert!(process_matches(&desktop, "Claude", Some(app), ""));
+        assert!(!process_matches(&code, "Claude", Some(app), ""));
+        assert!(process_matches(&code, "claude", Some(cli), ""));
+        assert!(!process_matches(&desktop, "claude", Some(cli), ""));
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn mac_application_paths_require_a_bundle_or_executable_file() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let root = tempfile::tempdir().unwrap();
+        let app = root.path().join("Example.app");
+        std::fs::create_dir_all(app.join("Contents")).unwrap();
+        assert!(!valid_application_path(&app));
+        std::fs::write(app.join("Contents/Info.plist"), b"plist").unwrap();
+        assert!(valid_application_path(&app));
+
+        let tool = root.path().join("tool");
+        std::fs::write(&tool, b"#!/bin/sh\n").unwrap();
+        assert!(!valid_application_path(&tool));
+        std::fs::set_permissions(&tool, std::fs::Permissions::from_mode(0o755)).unwrap();
+        assert!(valid_application_path(&tool));
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn gemini_cli_does_not_match_the_desktop_app() {
+        let cli = definition("gemini", &["gemini"]);
+        let app = Path::new("/Applications/Gemini.app/Contents/MacOS/Gemini");
+        let executable = Path::new("/opt/homebrew/bin/gemini");
+        assert!(!process_matches(&cli, "Gemini", Some(app), ""));
+        assert!(process_matches(&cli, "gemini", Some(executable), ""));
+    }
+
+    #[cfg(target_os = "windows")]
     #[test]
     #[ignore = "requires running Claude Desktop and Antigravity apps"]
     fn live_windows_desktop_app_detection() {

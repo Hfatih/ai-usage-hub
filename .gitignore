@@ -1,0 +1,32 @@
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/schemas/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+
+# Local account data and credentials must never enter the public repository.
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.pem
+*.p12
+*.pfx
+*.key
+*.crt
+*.exe
+*.msi
+*.bak
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/

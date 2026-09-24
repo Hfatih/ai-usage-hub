@@ -1,0 +1,116 @@
+import type { AccountSummary, AppSettings, DashboardSnapshot, SecurityStatus, UsageHistoryPoint } from "../types";
+
+export const developmentSnapshot: DashboardSnapshot = {
+  providers: [
+    ["openai", "ChatGPT / Codex"],
+    ["anthropic", "Anthropic"],
+    ["google", "Google / Antigravity"],
+    ["opencode", "OpenCode"],
+    ["kimi", "Kimi"],
+    ["github", "GitHub"],
+  ].map(([id, name]) => ({
+    id,
+    name,
+    accountLabel: id === "openai" ? "person@example.com" : id === "google" ? "gemini@example.com" : "Not connected",
+    plan: id === "openai" ? "Plus" : id === "google" ? "Pro" : null,
+    connectionStatus: id === "openai" || id === "google" ? "connected" as const : "not_connected" as const,
+    capabilities: {
+      usagePercentage: id === "openai" || id === "google",
+      resetTime: id === "openai" || id === "google",
+      requestCount: false,
+      tokenUsage: false,
+      costTracking: false,
+      localSessionDetection: true,
+      oauth: id === "openai" || id === "google",
+      multipleAccounts: false,
+      appLaunch: true,
+      rateLimitStatus: id === "openai" || id === "google",
+    },
+    usage: id === "openai" ? [
+      { metric: "codex_300m_remaining", label: "Shared 5-hour window", value: 59, maxValue: 100, unit: "% remaining", source: "official_cli" as const, confidence: "high" as const, retrievedAt: Math.floor(Date.now() / 1000), resetAt: Math.floor(Date.now() / 1000) + 5400 },
+      { metric: "codex_10080m_remaining", label: "Shared weekly window", value: 9, maxValue: 100, unit: "% remaining", source: "official_cli" as const, confidence: "high" as const, retrievedAt: Math.floor(Date.now() / 1000), resetAt: Math.floor(Date.now() / 1000) + 170000 },
+    ] : id === "google" ? [
+      { metric: "antigravity_gemini-5h_remaining", label: "Gemini Models · Five Hour Limit Remaining", value: 100, maxValue: 100, unit: "% remaining", source: "local_application" as const, confidence: "high" as const, retrievedAt: Math.floor(Date.now() / 1000), resetAt: Math.floor(Date.now() / 1000) + 5400 },
+      { metric: "antigravity_gemini-weekly_remaining", label: "Gemini Models · Weekly Limit Remaining", value: 94, maxValue: 100, unit: "% remaining", source: "local_application" as const, confidence: "high" as const, retrievedAt: Math.floor(Date.now() / 1000), resetAt: Math.floor(Date.now() / 1000) + 518400 },
+      { metric: "antigravity_3p-5h_remaining", label: "Claude and GPT models · Five Hour Limit Remaining", value: 100, maxValue: 100, unit: "% remaining", source: "local_application" as const, confidence: "high" as const, retrievedAt: Math.floor(Date.now() / 1000), resetAt: Math.floor(Date.now() / 1000) + 5400 },
+      { metric: "antigravity_3p-weekly_remaining", label: "Claude and GPT models · Weekly Limit Remaining", value: 100, maxValue: 100, unit: "% remaining", source: "local_application" as const, confidence: "high" as const, retrievedAt: Math.floor(Date.now() / 1000), resetAt: Math.floor(Date.now() / 1000) + 518400 },
+    ] : [],
+    usageAllowed: id === "openai" || id === "google" ? true : null,
+    lastRefresh: id === "openai" || id === "google" ? Math.floor(Date.now() / 1000) : null,
+    error: null,
+  })),
+  applications: [
+    ["codex", "openai", "Codex"],
+    ["chatgpt", "openai", "ChatGPT"],
+    ["claude", "anthropic", "Claude Desktop"],
+    ["claude-code", "anthropic", "Claude Code"],
+    ["gemini", "google", "Gemini CLI"],
+    ["antigravity", "google", "Antigravity"],
+    ["opencode", "opencode", "OpenCode"],
+    ["kimi", "kimi", "Kimi"],
+    ["vscode", "github", "Visual Studio Code"],
+    ["cursor", null, "Cursor"],
+  ].map(([id, providerId, displayName]) => ({
+    id: id!,
+    providerId,
+    displayName: displayName!,
+    state: "not_running" as const,
+    detectedExecutable: null,
+    executablePath: null,
+    runningSince: null,
+    currentSessionSeconds: 0,
+    todaySeconds: 0,
+    weekSeconds: 0,
+    lastUsedAt: null,
+    launchable: false,
+  })),
+  refreshedAt: Math.floor(Date.now() / 1000),
+  monitoringPaused: false,
+};
+
+export const developmentSettings: AppSettings = {
+  launchAtStartup: false,
+  minimizeToTray: true,
+  closeBehavior: "tray",
+  theme: "dark",
+  language: "tr",
+  processMonitoring: true,
+  refreshIntervalSeconds: 5,
+  notificationsEnabled: true,
+  notifyWarningPercent: 20,
+  notifyCriticalPercent: 10,
+  notifyOnReset: true,
+  notifyOnProviderError: true,
+};
+
+export const developmentAccounts: AccountSummary[] = [
+  {
+    id: "openai:preview",
+    providerId: "openai",
+    providerName: "ChatGPT / Codex",
+    email: "person@example.com",
+    plan: "Plus",
+    authMethod: "official_cli",
+    connectionStatus: "connected",
+    lastRefresh: Math.floor(Date.now() / 1000),
+    usage: developmentSnapshot.providers[0].usage,
+  },
+];
+
+export const developmentUsageHistory: UsageHistoryPoint[] = developmentAccounts[0].usage.map((usage, index) => ({
+  id: index + 1,
+  accountId: developmentAccounts[0].id,
+  providerId: "openai",
+  providerName: "ChatGPT / Codex",
+  accountLabel: developmentAccounts[0].email,
+  usage,
+}));
+
+export const developmentSecurity: SecurityStatus = {
+  databasePath: "Local preview database",
+  databaseSizeBytes: 0,
+  accountCount: developmentAccounts.length,
+  usageSnapshotCount: developmentUsageHistory.length,
+  storedSecretCount: 0,
+  providerCredentialsStored: false,
+};

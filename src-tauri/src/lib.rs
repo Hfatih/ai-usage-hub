@@ -224,7 +224,7 @@ fn build_tray(app: &tauri::App) -> tauri::Result<()> {
     let language = app.state::<HubState>().database.lock().ok()
         .and_then(|db| db.settings().ok())
         .map(|settings| settings.language)
-        .unwrap_or_else(|| "tr".into());
+        .unwrap_or_else(|| "en".into());
     let menu = tray_menu(app.handle(), &language)?;
 
     let mut builder = TrayIconBuilder::with_id("main-tray")
@@ -294,7 +294,7 @@ fn start_monitor(app: tauri::AppHandle) {
                     let language = state.database.lock().ok()
                         .and_then(|db| db.settings().ok())
                         .map(|settings| settings.language)
-                        .unwrap_or_else(|| "tr".into());
+                        .unwrap_or_else(|| "en".into());
                     let _ = tray.set_tooltip(Some(i18n::running_tooltip(running, &language)));
                 }
                 if changed {

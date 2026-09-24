@@ -23,6 +23,8 @@ must also be checked in a Tauri build where the relevant local app is available.
 
 ## Pull requests
 
+- Target `main` for Windows changes and `macos` for the Mac port. Forks can
+  propose macOS changes directly to `macos` without write access to this repo.
 - Keep changes focused and explain the user-facing behavior.
 - Include a short verification note and update [CHANGELOG.md](CHANGELOG.md)
   for visible changes.

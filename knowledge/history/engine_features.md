@@ -4,3 +4,4 @@
 - 2026-09-24: Scatter more stars across entire card backgrounds, with three fresh random layouts generated each time the UI starts (v0.1.12).
 - 2026-09-24: Replace the dense tiny card star field with a few larger, static pink ✦ glyphs based on the supplied Starlit star reference (v0.1.13).
 - 2026-09-24: Prepare v0.1.15 for a public MIT-licensed GitHub release with bilingual setup/privacy docs, contribution guidance, CI, and versioned installer releases.
+- 2026-09-24: Default new v0.1.16 installs and the NSIS installer to English, keep Turkish selectable, and establish a separate macOS development branch.

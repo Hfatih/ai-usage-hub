@@ -18,7 +18,7 @@ AI Usage Hub desteklenen sağlayıcı kotalarını, yerel token ve maliyet topla
 
 1. [Son sürüm](../../releases/latest) sayfasından Windows kurulum EXE dosyasını indir.
 2. Kurulumu çalıştır. Yalnızca mevcut Windows kullanıcısına kurulur; yönetici hesabı gerekmez.
-3. AI Usage Hub'ı açıp kısa başlangıç adımlarını tamamla. Her sağlayıcının veri durumunu **Entegrasyonlar** sayfasında görebilir, algılanmayan yerel uygulamalar için **Uygulamalar** sayfasından EXE seçebilirsin.
+3. AI Usage Hub'ı açıp kısa başlangıç adımlarını tamamla. Kurulum ve ilk açılış arayüzü İngilizcedir; istersen **Settings → Language** bölümünden Türkçe seçebilirsin. Her sağlayıcının veri durumunu **Integrations**, algılanmayan yerel uygulamaları **Apps** sayfasında yönetebilirsin.
 
 Windows 10/11 ve Microsoft Edge WebView2 gerekir. Kurulum paketi şu an **dijital olarak imzalı değil**; Windows yayıncı uyarısı gösterebilir. Dosyayı yalnızca bu deponun Releases sayfasından indir ve yayımlanan SHA-256 değeriyle karşılaştır. Otomatik güncelleme henüz yok; yeni sürümü mevcut kurulumun üzerine yükleyebilirsin.
 
@@ -63,6 +63,10 @@ npm run tauri build
 
 Kurulum dosyası `src-tauri/target/release/bundle/nsis/` altında oluşur. Kaynaktan derlemek için herhangi bir sağlayıcı hesabı gerekmez. Yalnızca tarayıcıda açılan Vite önizlemesi kurgusal örnek veriler kullanır; canlı yerel entegrasyonları Tauri uygulamasında kontrol et.
 
+## Platform dalları
+
+Varsayılan [`main` dalı](https://github.com/Hfatih/ai-usage-hub/tree/main) yayımlanan Windows sürümüdür. [`macos` dalı](https://github.com/Hfatih/ai-usage-hub/tree/macos) ilerideki Mac uyarlaması için ayrı geliştirme alanıdır. Henüz macOS kurulum paketi yoktur; Windows'a özel entegrasyonların Mac üzerinde uyarlanıp doğrulanması gerekir.
+
 ## Değişiklikleri doğrula
 
 ```powershell
@@ -76,7 +80,7 @@ Masaüstü kabuğu Tauri 2 ve Rust; arayüz React, TypeScript ve Vite kullanır.
 
 ## Bilinen sınırlar
 
-Arayüz varsayılan olarak Türkçedir; **Ayarlar → Dil** bölümünden İngilizce seçebilirsin. Çalışan uygulamalar aralıklarla tarandığı için çok kısa açılışlar kaçabilir. Güncel Antigravity kotası için Antigravity açık olmalı; Claude Desktop bir kullanım geçmişi örneği oluşturmuş olmalı. Etkileşimli terminal isteyen bazı CLI açma düğmeleri devre dışıdır. Sağlayıcı verisi uygulamadan bağımsız değişebilir; kartın kaynak ve yenilenme bilgisi hangi verinin gerçekten alındığını gösterir.
+Yeni kurulumlarda arayüz İngilizce başlar; **Settings → Language** bölümünden Türkçe seçebilirsin. Mevcut kurulumlar kayıtlı dil tercihini korur. Çalışan uygulamalar aralıklarla tarandığı için çok kısa açılışlar kaçabilir. Güncel Antigravity kotası için Antigravity açık olmalı; Claude Desktop bir kullanım geçmişi örneği oluşturmuş olmalı. Etkileşimli terminal isteyen bazı CLI açma düğmeleri devre dışıdır. Sağlayıcı verisi uygulamadan bağımsız değişebilir; kartın kaynak ve yenilenme bilgisi hangi verinin gerçekten alındığını gösterir.
 
 ## Lisans
 

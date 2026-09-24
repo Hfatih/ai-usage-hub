@@ -19,7 +19,7 @@ function usage(value: number, unit: string, maxValue: number | null = null): Usa
 describe("usage formatting", () => {
   it("does not present RPM, model counts, or tokens as percentages", () => {
     expect(formatUsageValue(usage(40, "RPM"))).toBe("40 RPM");
-    expect(formatUsageValue(usage(7, "models"))).toBe("7 model");
+    expect(formatUsageValue(usage(7, "models"))).toBe("7 models");
     expect(formatUsageValue(usage(104_284, "tokens"))).toContain("token");
     expect(usageProgress(usage(40, "RPM"))).toBeNull();
   });

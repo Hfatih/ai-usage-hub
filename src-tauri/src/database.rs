@@ -149,28 +149,6 @@ impl Database {
             );
             "#,
         )?;
-        // Earlier releases had an English-only UI; migrate that implicit default once.
-        let migrated: bool = self.connection.query_row(
-            "SELECT EXISTS(SELECT 1 FROM settings WHERE key = 'language_migrated_v1')",
-            [],
-            |row| row.get(0),
-        )?;
-        if !migrated {
-            if let Some(json) = self.connection.query_row(
-                "SELECT value_json FROM settings WHERE key = 'app'", [], |row| row.get::<_, String>(0),
-            ).optional()? {
-                if let Ok(mut settings) = serde_json::from_str::<AppSettings>(&json) {
-                    if settings.language == "en" {
-                        settings.language = "tr".into();
-                        self.save_settings(&settings)?;
-                    }
-                }
-            }
-            self.connection.execute(
-                "INSERT INTO settings (key, value_json, updated_at) VALUES ('language_migrated_v1', 'true', ?1)",
-                [Utc::now().timestamp()],
-            )?;
-        }
         Ok(())
     }
 
@@ -882,15 +860,15 @@ mod tests {
     }
 
     #[test]
-    fn old_implicit_english_default_becomes_turkish_once() -> Result<()> {
+    fn english_default_keeps_saved_language_on_upgrade() -> Result<()> {
         let mut db = Database::memory()?;
-        assert_eq!(db.settings()?.language, "tr");
-        let old = AppSettings { language: "en".into(), ..AppSettings::default() };
-        db.save_settings(&old)?;
-        db.connection.execute("DELETE FROM settings WHERE key = 'language_migrated_v1'", [])?;
+        assert_eq!(db.settings()?.language, "en");
+        let turkish = AppSettings { language: "tr".into(), ..AppSettings::default() };
+        db.save_settings(&turkish)?;
         db.migrate()?;
         assert_eq!(db.settings()?.language, "tr");
-        db.save_settings(&old)?;
+        let english = AppSettings::default();
+        db.save_settings(&english)?;
         db.migrate()?;
         assert_eq!(db.settings()?.language, "en");
         Ok(())

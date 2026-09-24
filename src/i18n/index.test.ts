@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import en from "./en";
 import tr from "./tr";
-import { localizeEvent, localizeValue, translate } from ".";
+import { currentLanguage, localizeEvent, localizeValue, translate } from ".";
 
 describe("interface languages", () => {
+  it("starts in English before settings load", () => {
+    expect(currentLanguage()).toBe("en");
+  });
+
   it("has a Turkish value for every English interface key", () => {
     expect(Object.keys(tr).sort()).toEqual(Object.keys(en).sort());
   });

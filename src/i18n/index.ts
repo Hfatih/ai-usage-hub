@@ -6,7 +6,7 @@ export type Language = "tr" | "en";
 type Values = Record<string, string | number>;
 
 export function currentLanguage(): Language {
-  return useHub.getState().settings?.language === "en" ? "en" : "tr";
+  return useHub.getState().settings?.language === "tr" ? "tr" : "en";
 }
 
 export function translate(key: string, language: Language = currentLanguage(), values: Values = {}): string {
@@ -16,7 +16,7 @@ export function translate(key: string, language: Language = currentLanguage(), v
 }
 
 export function useTranslation() {
-  const language = useHub<Language>((state) => state.settings?.language === "en" ? "en" : "tr");
+  const language = useHub<Language>((state) => state.settings?.language === "tr" ? "tr" : "en");
   return { language, t: (key: string, values?: Values) => translate(key, language, values) };
 }
 

@@ -22,7 +22,7 @@ export default function App() {
   const { load, refresh, settings } = useHub();
 
   useEffect(() => {
-    document.documentElement.lang = settings?.language === "en" ? "en" : "tr";
+    document.documentElement.lang = settings?.language === "tr" ? "tr" : "en";
   }, [settings?.language]);
 
   useEffect(() => {

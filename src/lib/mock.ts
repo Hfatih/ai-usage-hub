@@ -73,7 +73,7 @@ export const developmentSettings: AppSettings = {
   minimizeToTray: true,
   closeBehavior: "tray",
   theme: "dark",
-  language: "tr",
+  language: "en",
   processMonitoring: true,
   refreshIntervalSeconds: 5,
   notificationsEnabled: true,

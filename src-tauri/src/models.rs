@@ -227,7 +227,7 @@ impl Default for AppSettings {
             minimize_to_tray: true,
             close_behavior: "tray".into(),
             theme: "dark".into(),
-            language: "tr".into(),
+            language: "en".into(),
             process_monitoring: true,
             refresh_interval_seconds: 5,
             notifications_enabled: true,

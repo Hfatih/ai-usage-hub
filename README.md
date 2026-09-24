@@ -18,7 +18,7 @@ AI Usage Hub brings supported provider quotas, local token and cost totals, app 
 
 1. Download the Windows setup EXE from the [latest release](../../releases/latest).
 2. Run the installer. It installs for the current Windows user and does not need an administrator account.
-3. Open AI Usage Hub and complete the short setup. Use **Integrations** to see what each provider can supply and **Apps** to select a local executable if detection needs help.
+3. Open AI Usage Hub and complete the short setup. The installer and first-run interface are in English. Choose Turkish later in **Settings → Language** if you prefer. Use **Integrations** to see what each provider can supply and **Apps** to select a local executable if detection needs help.
 
 Windows 10/11 and Microsoft Edge WebView2 are required. The installer is currently **unsigned**; Windows may show a publisher warning. Download only from this repository's Releases page and verify the published SHA-256 checksum. There is no automatic updater yet: install a newer release over the current one to update.
 
@@ -63,6 +63,10 @@ npm run tauri build
 
 The installer is written under `src-tauri/target/release/bundle/nsis/`. Building from source requires no provider credentials. The browser-only Vite preview uses fictional sample data; run the Tauri app to check live local integrations.
 
+## Platform branches
+
+The default [`main` branch](https://github.com/Hfatih/ai-usage-hub/tree/main) is the Windows version and contains the released installer. The [`macos` branch](https://github.com/Hfatih/ai-usage-hub/tree/macos) is a separate development track for a future Mac port. No macOS installer is published yet; the Windows-specific integrations still need to be adapted and verified on a Mac.
+
 ## Verify a change
 
 ```powershell
@@ -76,7 +80,7 @@ The desktop shell uses Tauri 2 and Rust; the interface uses React, TypeScript, a
 
 ## Scope and limitations
 
-The default interface language is Turkish; choose English in **Settings → Language**. Process monitoring samples running apps periodically, so very short launches can be missed. Antigravity must be open for fresh quota data, and Claude Desktop must have written a usage-history sample. Some CLI launch actions stay disabled when they require an interactive terminal. Data from a provider can change independently of this app; the card's source and refresh state tell you what was actually retrieved.
+New installations start in English; choose Turkish in **Settings → Language**. Existing installations keep their saved language preference. Process monitoring samples running apps periodically, so very short launches can be missed. Antigravity must be open for fresh quota data, and Claude Desktop must have written a usage-history sample. Some CLI launch actions stay disabled when they require an interactive terminal. Data from a provider can change independently of this app; the card's source and refresh state tell you what was actually retrieved.
 
 ## License
 
